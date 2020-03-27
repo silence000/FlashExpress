@@ -4,12 +4,13 @@
       <div class="container">
         <h2>FlashExpress<br />物流管理系统用户登录</h2>
         <p>用户名</p>
-        <el-input v-model="username" placeholder="请输入用户名: "></el-input>
+        <el-input v-model="username" placeholder="请输入用户名: " clearable></el-input>
         <p>密码</p>
         <el-input
           placeholder="请输入密码: "
           v-model="userpass"
           show-password
+          clearable
         ></el-input>
         <p>滑动验证</p>
         <slide-verify v-if="update" v-model="verify"></slide-verify>
@@ -84,12 +85,15 @@ export default {
             that.$store.commit("setUsername", response.data.username);
             console.log("Vuex: userID " + that.$store.state.userID);
             console.log("Vuex: username " + that.$store.state.username);
-            that.queryAuthority();
+            that.queryAuthority(response.data.role);
             that.$message({
               showClose: true,
-              message: "登录成功! ",
+              message: "登录成功! 即将跳转到主页... ",
               type: "success"
             });
+            setTimeout(function() {
+              that.$router.push("/main");
+            }, 1500);
           } else {
             that.$message({
               showClose: true,
@@ -120,11 +124,10 @@ export default {
           });
         });
     },
-    queryAuthority() {
-      const id = this.$store.state.userID;
+    queryAuthority(role) {
       const that = this;
       this.$axios
-        .post(`http://192.168.0.105:8890/role/query${id}`)
+        .post(`http://192.168.0.105:8890/role/query${role}`)
         .then(function(response) {
           that.$store.commit("setRoleVal", response.data.value);
           that.$store.commit("setRoleDesc", response.data.description);
