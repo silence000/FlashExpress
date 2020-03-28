@@ -8,7 +8,8 @@ export default new Vuex.Store({
     userID: "",
     userName: "",
     roleVal: "",
-    roleDescription: ""
+    roleDescription: "",
+    customerID: ""
   },
   mutations: {
     setUserID(state, val) {
@@ -22,6 +23,9 @@ export default new Vuex.Store({
     },
     setRoleDesc(state, val) {
       state.roleDescription = val;
+    },
+    setCustomerID(state, val) {
+      state.customerID = val;
     }
   },
   actions: {},

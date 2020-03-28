@@ -25,7 +25,7 @@
         <el-input
           class="mini-input"
           placeholder="请输入内容"
-          v-model="name"
+          v-model="pid"
           clearable
           size="small"
         >
@@ -36,7 +36,7 @@
         <el-input
           class="mini-input"
           placeholder="请输入内容"
-          v-model="name"
+          v-model="employer"
           clearable
           size="small"
         >
@@ -47,7 +47,7 @@
         <el-input
           class="mini-input"
           placeholder="请输入内容"
-          v-model="name"
+          v-model="telephone"
           clearable
           size="small"
         >
@@ -58,7 +58,7 @@
         <el-input
           class="mini-input"
           placeholder="请输入内容"
-          v-model="name"
+          v-model="mobile"
           clearable
           size="small"
         >
@@ -69,7 +69,7 @@
         <el-input
           class="mini-input"
           placeholder="请输入内容"
-          v-model="name"
+          v-model="address"
           clearable
           size="small"
         >
@@ -80,7 +80,7 @@
         <el-input
           class="mini-input"
           placeholder="请输入内容"
-          v-model="name"
+          v-model="postcode"
           clearable
           size="small"
         >
@@ -91,15 +91,15 @@
         <el-input
           class="mini-input"
           placeholder="请输入内容"
-          v-model="name"
+          v-model="email"
           clearable
           size="small"
         >
         </el-input>
       </div>
       <el-button-group class="button-group">
-        <el-button type="success">保存</el-button>
-        <el-button type="danger">重新填写</el-button>
+        <el-button @click="submit" type="success">保存</el-button>
+        <el-button @click="reset" type="danger">重新填写</el-button>
         <el-button @click="switchRouter('customer_manage')" type="primary">返回</el-button>
       </el-button-group>
     </div>
@@ -107,12 +107,78 @@
 </template>
 <script>
 export default {
+  data() {
+    return {
+      name: "",
+      pid: "",
+      employer: "",
+      telephone: "",
+      mobile: "",
+      address: "",
+      postcode: "",
+      email: ""
+    };
+  },
   methods: {
     switchRouter(path) {
       const location = "/main/" + path;
       if (this.$route.path !== location) {
         this.$router.push(location);
       }
+    },
+    reset() {
+      this.name = "";
+      this.pid = "";
+      this.employer = "";
+      this.telephone = "";
+      this.mobile = "";
+      this.address = "";
+      this.postcode = "";
+      this.email = "";
+    },
+    submit() {
+      const that = this;
+      const data = {
+        name: this.name,
+        pid: this.pid,
+        employer: this.employer,
+        telephone: this.telephone,
+        mobile: this.mobile,
+        address: this.address,
+        postcode: this.postcode,
+        email: this.email
+      };
+      this.$axios({
+        url: "http://192.168.0.105:8890/customerInfoService/insertCustomer",
+        data: data,
+        method: "post",
+        header: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(function(response) {
+          if (response.data.code + "" === "1") {
+            that.$message({
+              showClose: true,
+              message: "保存成功!",
+              type: "success"
+            });
+          } else {
+            that.$message({
+              showClose: true,
+              message: "保存失败!",
+              type: "error"
+            });
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+          that.$message({
+            showClose: true,
+            message: "请求失败, 远程服务器出错! ",
+            type: "error"
+          });
+        });
     }
   }
 };

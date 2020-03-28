@@ -23,24 +23,26 @@
         <el-input
           class="mini-input"
           placeholder="请输入内容"
-          v-model="pid"
+          v-model="name"
           clearable
           size="small"
         >
         </el-input>
       </div>
       <div class="search-content">
-        <span>电话号：</span>
+        <span>手机号：</span>
         <el-input
           class="mini-input"
           placeholder="请输入内容"
-          v-model="pid"
+          v-model="mobile"
           clearable
           size="small"
         >
         </el-input>
       </div>
-      <el-button class="button" type="primary">查询</el-button>
+      <el-button class="button" @click="queryList" type="primary"
+        >查询</el-button
+      >
       <el-button
         class="button"
         @click="switchRouter('new_customer')"
@@ -61,14 +63,14 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection"></el-table-column>
-        <el-table-column fixed prop="series" label="客户编号" width="80">
+        <el-table-column fixed prop="id" label="客户编号" width="80">
         </el-table-column>
         <el-table-column prop="name" label="客户姓名" width="80">
         </el-table-column>
         <el-table-column prop="employer" label="工作单位"> </el-table-column>
         <el-table-column prop="telephone" label="座机" width="125">
         </el-table-column>
-        <el-table-column prop="mobile" label="移动电话" width="120px">
+        <el-table-column prop="mobile" label="手机号" width="120px">
         </el-table-column>
         <el-table-column
           prop="pid"
@@ -80,14 +82,10 @@
             <el-button @click="handleClick(scope.row)" size="mini">
               详细
             </el-button>
-            <el-button
-              @click="switchRouter('alter_customer')"
-              type="primary"
-              size="mini"
-            >
+            <el-button @click="edit(scope.row)" type="primary" size="mini">
               编辑
             </el-button>
-            <el-button type="danger" size="mini">删除</el-button>
+            <el-button @click="deleteOne(scope.row, scope.$index, tableData)" type="danger" size="mini">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -104,7 +102,7 @@
           :page-sizes="[5, 10, 20, 50]"
           :page-size="100"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="400"
+          :total="total"
         >
         </el-pagination>
       </div>
@@ -115,44 +113,19 @@
 export default {
   data() {
     return {
-      pid: "",
-      multipleSelection: [],
-      currentPage: 2,
-      tableData: [
-        {
-          series: 100000,
-          name: "谢文东",
-          employer: "XDL兄弟连",
-          telephone: "0455-82323297",
-          mobile: "17612341234",
-          pid: "210106197902232326"
-        },
-        {
-          series: 100000,
-          name: "谢文东",
-          employer: "XDL兄弟连",
-          telephone: "0455-82323297",
-          mobile: "17612341234",
-          pid: "210106197902232326"
-        },
-        {
-          series: 100000,
-          name: "谢文东",
-          employer: "XDL兄弟连",
-          telephone: "0455-82323297",
-          mobile: "17612341234",
-          pid: "210106197902232326"
-        },
-        {
-          series: 100000,
-          name: "谢文东",
-          employer: "XDL兄弟连",
-          telephone: "0455-82323297",
-          mobile: "17612341234",
-          pid: "210106197902232326"
-        }
-      ]
+      update: true, // 刷新分页组件
+      multipleSelection: [], // 列表多选数组
+      pid: "", // 客户身份证号
+      name: "", // 客户姓名
+      mobile: "", // 客户手机号
+      currentPage: 1, // 当前页
+      size: 5, // 默认每页显示的条数
+      total: 0,
+      tableData: []
     };
+  },
+  mounted() {
+    this.queryList();
   },
   methods: {
     switchRouter(path) {
@@ -161,18 +134,64 @@ export default {
         this.$router.push(location);
       }
     },
+    edit(row) {
+      this.$store.commit("setCustomerID", row.id);
+      this.switchRouter("alter_customer");
+    },
+    deleteOne(row, index, rows) {
+      rows.splice(index, 1);
+      const that = this;
+      const data = {
+        id: row.id
+      };
+      this.$axios({
+        url: "http://192.168.0.105:8890/customerInfoService/deleteOneCustomer",
+        data: data,
+        method: "post",
+        header: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(function(response) {
+          if (response.data.code + "" === "1") {
+            that.$message({
+              showClose: true,
+              message: "删除成功!",
+              type: "success"
+            });
+          } else {
+            that.$message({
+              showClose: true,
+              message: "删除失败!",
+              type: "error"
+            });
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+          that.$message({
+            showClose: true,
+            message: "请求失败, 远程服务器出错! ",
+            type: "error"
+          });
+        });
+    },
+    // TODO 详细
     handleClick(row) {
       console.log(row);
     },
+    // TODO 全选
     handleSelectionChange(val) {
       this.multipleSelection = val;
       console.log(val);
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      this.size = val;
+      this.queryList();
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.currentPage = val;
+      this.queryList();
     },
     toggleSelection(rows) {
       if (rows) {
@@ -182,6 +201,37 @@ export default {
       } else {
         this.$refs.multipleTable.clearSelection();
       }
+    },
+    queryList() {
+      const that = this;
+      const data = {
+        pid: this.pid,
+        name: this.name,
+        mobile: this.mobile,
+        current: this.currentPage,
+        size: this.size
+      };
+      this.$axios({
+        url:
+          "http://192.168.0.105:8890/customerInfoService/getCustomerInfoList",
+        data: data,
+        method: "post",
+        header: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(function(response) {
+          that.tableData = response.data.data;
+          that.total = response.data.data[0].total;
+        })
+        .catch(function(error) {
+          console.log(error);
+          that.$message({
+            showClose: true,
+            message: "请求失败, 远程服务器出错! ",
+            type: "error"
+          });
+        });
     }
   }
 };
