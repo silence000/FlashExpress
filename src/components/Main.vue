@@ -111,22 +111,22 @@
           </el-link>
         </div>
         <div class="nav-link">
-          <el-link :underline="false"
+          <el-link :underline="false" @click="back"
             ><i class="fa fa-arrow-left"></i> 后退</el-link
           >
         </div>
         <div class="nav-link">
-          <el-link :underline="false"
+          <el-link :underline="false" @click="forward"
             ><i class="fa fa-arrow-right"></i> 前进</el-link
           >
         </div>
         <div class="nav-link">
-          <el-link :underline="false"
+          <el-link :underline="false" @click="refresh"
             ><i class="fa fa-sync-alt"></i> 刷新</el-link
           >
         </div>
         <div class="nav-link">
-          <el-link :underline="false"
+          <el-link :underline="false" @click="help"
             ><i class="fa fa-question"></i> 帮助</el-link
           >
         </div>
@@ -134,7 +134,7 @@
           Hi，
           <span v-text="role"></span>：
           <span v-text="username"></span>
-          <el-link :underline="false">
+          <el-link :underline="false" @click="exit">
             <i class="fa fa-sign-out-alt"></i> 退出登录
           </el-link>
         </div>
@@ -166,8 +166,30 @@ export default {
   },
   methods: {
     init() {
-      this.username = this.$store.state.username;
-      this.role = this.$store.state.roleDescription;
+      // this.username = this.$store.state.username;
+      // this.role = this.$store.state.roleDescription;
+      this.username = sessionStorage.getItem("userName");
+      this.role = sessionStorage.getItem("roleDescription");
+      if (this.username == null) {
+        alert("尚未登录，请您先登录！");
+        this.$router.push("/login");
+      }
+    },
+    exit() {
+      localStorage.clear();
+      this.$router.push("/login");
+    },
+    refresh() {
+      location.reload();
+    },
+    back() {
+      history.go(-1);
+    },
+    forward() {
+      window.history.forward();
+    },
+    help() {
+      alert("并没有帮助");
     },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);

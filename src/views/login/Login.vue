@@ -4,7 +4,11 @@
       <div class="container">
         <h2>FlashExpress<br />物流管理系统用户登录</h2>
         <p>用户名</p>
-        <el-input v-model="username" placeholder="请输入用户名: " clearable></el-input>
+        <el-input
+          v-model="username"
+          placeholder="请输入用户名: "
+          clearable
+        ></el-input>
         <p>密码</p>
         <el-input
           placeholder="请输入密码: "
@@ -79,12 +83,11 @@ export default {
         }
       })
         .then(function(response) {
-          console.log(response.data);
           if (response.data.length !== 0) {
             that.$store.commit("setUserID", response.data.id);
             that.$store.commit("setUsername", response.data.username);
-            console.log("Vuex: userID " + that.$store.state.userID);
-            console.log("Vuex: username " + that.$store.state.username);
+            sessionStorage.setItem("userID", response.data.id);
+            sessionStorage.setItem("userName", response.data.username);
             that.queryAuthority(response.data.role);
             that.$message({
               showClose: true,
@@ -131,8 +134,8 @@ export default {
         .then(function(response) {
           that.$store.commit("setRoleVal", response.data.value);
           that.$store.commit("setRoleDesc", response.data.description);
-          console.log("Vuex: roleVal " + that.$store.state.roleVal);
-          console.log("Vuex: roleDesc " + that.$store.state.roleDescription);
+          sessionStorage.setItem("roleVal", response.data.value);
+          sessionStorage.setItem("roleDescription", response.data.description);
         })
         .catch(function(error) {
           console.log(error);

@@ -79,7 +79,7 @@
         ></el-table-column>
         <el-table-column label="操作" width="210">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" size="mini">
+            <el-button @click="details(scope.row)" size="mini">
               详细
             </el-button>
             <el-button @click="edit(scope.row)" type="primary" size="mini">
@@ -136,6 +136,7 @@ export default {
     },
     edit(row) {
       this.$store.commit("setCustomerID", row.id);
+      sessionStorage.setItem("customerID", row.id);
       this.switchRouter("alter_customer");
     },
     deleteOne(row, index, rows) {
@@ -176,13 +177,16 @@ export default {
           });
         });
     },
-    // TODO 详细
-    handleClick(row) {
+    details(row) {
       console.log(row);
+      // this.$store.commit("setCustomerID", row.id);
+      sessionStorage.setItem("customerID", row.id);
+      this.switchRouter("details");
     },
-    // TODO 全选
+    // TODO 全选 与 全部删除
     handleSelectionChange(val) {
       this.multipleSelection = val;
+      console.log("执行了全选");
       console.log(val);
     },
     handleSizeChange(val) {

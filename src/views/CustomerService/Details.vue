@@ -13,10 +13,10 @@
           <span>客户编号：</span>
           <el-input
             class="mini-input"
-            placeholder="请输入内容"
-            v-model="pid"
-            clearable
+            placeholder="无"
+            v-model="id"
             size="small"
+            :readonly="true"
           >
           </el-input>
         </div>
@@ -24,10 +24,10 @@
           <span>客户姓名：</span>
           <el-input
             class="mini-input"
-            placeholder="请输入内容"
-            v-model="pid"
-            clearable
+            placeholder="无"
+            v-model="name"
             size="small"
+            :readonly="true"
           >
           </el-input>
         </div>
@@ -35,10 +35,10 @@
           <span>身份证号：</span>
           <el-input
             class="mini-input"
-            placeholder="请输入内容"
+            placeholder="无"
             v-model="pid"
-            clearable
             size="small"
+            :readonly="true"
           >
           </el-input>
         </div>
@@ -48,10 +48,10 @@
           <span>工作单位：</span>
           <el-input
             class="mini-input"
-            placeholder="请输入内容"
-            v-model="pid"
-            clearable
+            placeholder="无"
+            v-model="employer"
             size="small"
+            :readonly="true"
           >
           </el-input>
         </div>
@@ -59,10 +59,10 @@
           <span>座机：</span>
           <el-input
             class="mini-input"
-            placeholder="请输入内容"
-            v-model="pid"
-            clearable
+            placeholder="无"
+            v-model="telephone"
             size="small"
+            :readonly="true"
           >
           </el-input>
         </div>
@@ -70,10 +70,10 @@
           <span>移动电话：</span>
           <el-input
             class="mini-input"
-            placeholder="请输入内容"
-            v-model="pid"
-            clearable
+            placeholder="无"
+            v-model="mobile"
             size="small"
+            :readonly="true"
           >
           </el-input>
         </div>
@@ -83,10 +83,10 @@
           <span>联系地址：</span>
           <el-input
             class="mini-input"
-            placeholder="请输入内容"
-            v-model="pid"
-            clearable
+            placeholder="无"
+            v-model="address"
             size="small"
+            :readonly="true"
           >
           </el-input>
         </div>
@@ -94,10 +94,10 @@
           <span>邮编：</span>
           <el-input
             class="mini-input"
-            placeholder="请输入内容"
-            v-model="pid"
-            clearable
+            placeholder="无"
+            v-model="postcode"
             size="small"
+            :readonly="true"
           >
           </el-input>
         </div>
@@ -105,10 +105,10 @@
           <span>电子邮件：</span>
           <el-input
             class="mini-input"
-            placeholder="请输入内容"
-            v-model="pid"
-            clearable
+            placeholder="无"
+            v-model="email"
             size="small"
+            :readonly="true"
           >
           </el-input>
         </div>
@@ -119,33 +119,33 @@
     <div class="search-box">
       <div class="search-box-line">
         <div class="search-content">
-          <span>客户编号：</span>
+          <span style="width: 120px">订单生成日期：</span>
           <el-input
             class="mini-input"
             placeholder="请输入内容"
-            v-model="pid"
+            v-model="date"
             clearable
             size="small"
           >
           </el-input>
         </div>
         <div class="search-content">
-          <span>客户姓名：</span>
+          <span>订单状态：</span>
           <el-input
             class="mini-input"
             placeholder="请输入内容"
-            v-model="pid"
+            v-model="status"
             clearable
             size="small"
           >
           </el-input>
         </div>
         <div class="search-content">
-          <span>身份证号：</span>
+          <span>订购商品：</span>
           <el-input
             class="mini-input"
             placeholder="请输入内容"
-            v-model="pid"
+            v-model="product"
             clearable
             size="small"
           >
@@ -199,7 +199,22 @@
 export default {
   data() {
     return {
-      currentPage: 2,
+      // 客户信息部分
+      id: "",
+      name: "",
+      pid: "",
+      employer: "",
+      telephone: "",
+      mobile: "",
+      address: "",
+      postcode: "",
+      email: "",
+      // 搜索条件
+      date: "",
+      status: "",
+      product: "",
+      // 查询表格
+      currentPage: 1,
       tableData: [
         {
           series: 100000,
@@ -236,6 +251,9 @@ export default {
       ]
     };
   },
+  mounted() {
+    this.init();
+  },
   methods: {
     switchRouter(path) {
       const location = "/main/" + path;
@@ -248,6 +266,48 @@ export default {
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
+    },
+    init() {
+      const that = this;
+      const data = {
+        // id: this.$store.state.customerID
+        id: sessionStorage.getItem("customerID")
+      };
+      this.$axios({
+        url: "http://192.168.0.105:8890/customerInfoService/getCustomer",
+        data: data,
+        method: "post",
+        header: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(function(response) {
+          if (response.data.code + "" === "1") {
+            that.id = response.data.data.id;
+            that.name = response.data.data.name;
+            that.pid = response.data.data.pid;
+            that.employer = response.data.data.employer;
+            that.telephone = response.data.data.telephone;
+            that.mobile = response.data.data.mobile;
+            that.address = response.data.data.address;
+            that.postcode = response.data.data.postcode;
+            that.email = response.data.data.email;
+          } else {
+            that.$message({
+              showClose: true,
+              message: "数据获取失败!",
+              type: "error"
+            });
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+          that.$message({
+            showClose: true,
+            message: "请求失败, 远程服务器出错! ",
+            type: "error"
+          });
+        });
     }
   }
 };
@@ -277,12 +337,16 @@ export default {
     }
     .mini-input {
       width: 200px;
+      input {
+        color: $color-text-primary !important;
+        background-color: white !important;
+      }
     }
   }
 }
 .search-box {
   @extend .detail-box-line;
-  width: 1030px;
+  width: 1070px;
   margin: 0 auto 0 auto;
 }
 .block {
