@@ -114,7 +114,7 @@
         </div>
       </div>
     </div>
-    <hr />
+    <el-divider></el-divider>
     <div class="title"><b>该客户已订购过的商品</b></div>
     <div class="search-box">
       <div class="search-box-line">

@@ -6,6 +6,8 @@ import CustomerManage from "../views/CustomerService/CustomerManage";
 import NewCustomer from "../views/CustomerService/NewCustomer";
 import AlterCustomer from "../views/CustomerService/AlterCustomer";
 import Details from "../views/CustomerService/Details";
+import NewOrders from "../views/CustomerService/NewOrders";
+import CreateOrders from "../views/CustomerService/CreateOrders";
 
 Vue.use(VueRouter);
 
@@ -45,6 +47,16 @@ const routes = [
         path: "details",
         name: "Details",
         component: Details
+      },
+      {
+        path: "new_orders",
+        name: "NewOrders",
+        component: NewOrders
+      },
+      {
+        path: "create_orders",
+        name: "CreateOrders",
+        component: CreateOrders
       }
     ]
   }

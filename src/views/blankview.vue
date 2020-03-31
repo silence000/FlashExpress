@@ -1,5 +1,13 @@
 <template>
   <div></div>
 </template>
-<script></script>
+<script>
+export default {
+  mounted() {},
+  data() {},
+  methods: {},
+  computed: {},
+  watch: {}
+};
+</script>
 <style scoped lang="scss"></style>

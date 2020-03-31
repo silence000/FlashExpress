@@ -18,7 +18,9 @@
               <el-menu-item @click="switchRouter('customer_manage')" index="1-1"
                 >客户管理</el-menu-item
               >
-              <el-menu-item index="1-2">新订单</el-menu-item>
+              <el-menu-item @click="switchRouter('new_orders')" index="1-2"
+                >新订单</el-menu-item
+              >
               <el-menu-item index="1-3">订单操作</el-menu-item>
               <el-menu-item index="1-4">退货</el-menu-item>
             </el-menu-item-group>
@@ -166,8 +168,6 @@ export default {
   },
   methods: {
     init() {
-      // this.username = this.$store.state.username;
-      // this.role = this.$store.state.roleDescription;
       this.username = sessionStorage.getItem("userName");
       this.role = sessionStorage.getItem("roleDescription");
       if (this.username == null) {

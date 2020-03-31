@@ -3,7 +3,7 @@
     <el-breadcrumb separator="/" class="breadcrumb">
       <el-breadcrumb-item><b>当前位置：</b></el-breadcrumb-item>
       <el-breadcrumb-item><b>客户服务中心</b></el-breadcrumb-item>
-      <el-breadcrumb-item>客户管理</el-breadcrumb-item>
+      <el-breadcrumb-item>新订单</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="search">
       <div class="title"><b>查询客户</b></div>
@@ -43,12 +43,6 @@
       <el-button class="button" @click="queryList" type="primary"
         >查询</el-button
       >
-      <el-button
-        class="button"
-        @click="switchRouter('new_customer')"
-        type="success"
-        >新建</el-button
-      >
     </div>
     <div>
       <div class="title"><b>客户列表</b></div>
@@ -60,9 +54,7 @@
         border
         style="width: 100%"
         min-width="1020"
-        @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection"></el-table-column>
         <el-table-column fixed prop="id" label="客户编号" width="80">
         </el-table-column>
         <el-table-column prop="name" label="客户姓名" width="80">
@@ -77,28 +69,15 @@
           label="身份证号"
           width="170px"
         ></el-table-column>
-        <el-table-column label="操作" width="210">
+        <el-table-column label="操作" width="105">
           <template slot-scope="scope">
-            <el-button @click="details(scope.row)" size="mini">
-              详细
+            <el-button @click="newOrders(scope.row)" type="primary" size="mini">
+              新建订单
             </el-button>
-            <el-button @click="edit(scope.row)" type="primary" size="mini">
-              编辑
-            </el-button>
-            <el-button
-              @click="deleteOne(scope.row, scope.$index, tableData)"
-              type="danger"
-              size="mini"
-              >删除</el-button
-            >
           </template>
         </el-table-column>
       </el-table>
       <br />
-      <el-button type="primary" size="mini" @click="toggleSelection()"
-        >取消选中</el-button
-      >
-      <el-button type="danger" size="mini">全部删除</el-button>
       <div class="block">
         <el-pagination
           @size-change="handleSizeChange"
@@ -139,60 +118,9 @@ export default {
         this.$router.push(location);
       }
     },
-    edit(row) {
-      this.$store.commit("setCustomerID", row.id);
+    newOrders(row) {
       sessionStorage.setItem("customerID", row.id);
-      this.switchRouter("alter_customer");
-    },
-    deleteOne(row, index, rows) {
-      rows.splice(index, 1);
-      const that = this;
-      const data = {
-        id: row.id
-      };
-      this.$axios({
-        url: "http://192.168.0.105:8890/customerInfoService/deleteOneCustomer",
-        data: data,
-        method: "post",
-        header: {
-          "Content-Type": "application/json"
-        }
-      })
-        .then(function(response) {
-          if (response.data.code + "" === "1") {
-            that.$message({
-              showClose: true,
-              message: "删除成功!",
-              type: "success"
-            });
-          } else {
-            that.$message({
-              showClose: true,
-              message: "删除失败!",
-              type: "error"
-            });
-          }
-        })
-        .catch(function(error) {
-          console.log(error);
-          that.$message({
-            showClose: true,
-            message: "请求失败, 远程服务器出错! ",
-            type: "error"
-          });
-        });
-    },
-    details(row) {
-      console.log(row);
-      // this.$store.commit("setCustomerID", row.id);
-      sessionStorage.setItem("customerID", row.id);
-      this.switchRouter("details");
-    },
-    // TODO 全选 与 全部删除
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
-      console.log("执行了全选");
-      console.log(val);
+      this.switchRouter("create_orders");
     },
     handleSizeChange(val) {
       this.size = val;
@@ -201,15 +129,6 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
       this.queryList();
-    },
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.multipleTable.toggleRowSelection(row);
-        });
-      } else {
-        this.$refs.multipleTable.clearSelection();
-      }
     },
     queryList() {
       const that = this;
@@ -247,16 +166,16 @@ export default {
 </script>
 <style scoped lang="scss">
 @import "../../assets/scss/variable";
+.block {
+  text-align: center;
+  color: $color-text-primary;
+}
 .breadcrumb {
   margin-bottom: 20px;
 }
 .title {
   color: $color-text-primary;
   margin-bottom: 10px;
-}
-.block {
-  text-align: center;
-  color: $color-text-primary;
 }
 .search {
   color: $color-text-primary;

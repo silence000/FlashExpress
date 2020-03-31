@@ -84,8 +84,6 @@ export default {
       })
         .then(function(response) {
           if (response.data.length !== 0) {
-            that.$store.commit("setUserID", response.data.id);
-            that.$store.commit("setUsername", response.data.username);
             sessionStorage.setItem("userID", response.data.id);
             sessionStorage.setItem("userName", response.data.username);
             that.queryAuthority(response.data.role);
@@ -128,12 +126,9 @@ export default {
         });
     },
     queryAuthority(role) {
-      const that = this;
       this.$axios
         .post(`http://192.168.0.105:8890/role/query${role}`)
         .then(function(response) {
-          that.$store.commit("setRoleVal", response.data.value);
-          that.$store.commit("setRoleDesc", response.data.description);
           sessionStorage.setItem("roleVal", response.data.value);
           sessionStorage.setItem("roleDescription", response.data.description);
         })
