@@ -120,6 +120,7 @@ export default {
     },
     newOrders(row) {
       sessionStorage.setItem("customerID", row.id);
+      sessionStorage.setItem("customerName", row.name);
       this.switchRouter("create_orders");
     },
     handleSizeChange(val) {

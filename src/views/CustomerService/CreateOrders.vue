@@ -94,23 +94,29 @@
           >
             <el-option
               v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.exKey"
+              :label="item.exValue"
+              :value="item.exKey"
             >
             </el-option>
           </el-select>
         </div>
         <div class="search-content">
           <span>订单状态：</span>
-          <el-input
-            class="mini-input"
-            placeholder="无"
+          <el-select
             v-model="status"
+            placeholder="请选择"
             size="small"
-            :readonly="true"
+            class="input"
           >
-          </el-input>
+            <el-option
+              v-for="item in options2"
+              :key="item.exKey"
+              :label="item.exValue"
+              :value="item.exKey"
+            >
+            </el-option>
+          </el-select>
         </div>
       </div>
       <div class="detail-box-line">
@@ -248,8 +254,8 @@
       <br />
       <div class="button-group">
         <el-button-group>
-          <el-button type="primary">确定</el-button>
-          <el-button type="danger">清除</el-button>
+          <el-button @click="submit" type="primary">确定</el-button>
+          <el-button @click="clear" type="danger">清除</el-button>
           <el-button @click="switchRouter('new_orders')" type="warning"
             >返回</el-button
           >
@@ -262,30 +268,14 @@
 export default {
   mounted() {
     this.query();
-    // this.initOrders();
+    this.initOrders();
+    this.initOptions();
   },
   data() {
     return {
-      options: [
-        {
-          value: "1",
-          label: "普通配送订单"
-        },
-        {
-          value: "2",
-          label: "异地收款订单"
-        },
-        {
-          value: "3",
-          label: "换货单"
-        },
-        {
-          value: "4",
-          label: "退货单"
-        }
-      ],
+      options: [],
+      options2: [],
       /* 商品查询与商品库存 */
-      type: [], // 订单类型
       currentPage: 1, // 当前页
       size: 5, // 默认每页显示的条数
       total: 0, // 数据总条数
@@ -296,6 +286,7 @@ export default {
       /* 订购信息录入 */
       series: "", // 订单号
       status: "", // 订单状态
+      type: "", // 订单类型
       productName: "", // 商品名称
       number: 1, // 商品数量
       productDescription: "", // 商品描述
@@ -311,6 +302,10 @@ export default {
     };
   },
   methods: {
+    test() {
+      console.log(this.status);
+      console.log(this.type);
+    },
     switchRouter(path) {
       const location = "/main/" + path;
       if (this.$route.path !== location) {
@@ -345,6 +340,8 @@ export default {
           that.price = response.data.data.price;
           that.totalPrice = that.price;
           that.unit = response.data.data.unit;
+          sessionStorage.setItem("product_id", response.data.data.id);
+          sessionStorage.setItem("product_series", response.data.data.series);
         })
         .catch(function(error) {
           console.log(error);
@@ -359,6 +356,48 @@ export default {
       this.multipleSelection = val;
       console.log("执行了选择框");
       console.log(val);
+    },
+    calculateTotal() {
+      this.totalPrice = this.number * this.price;
+    },
+    initOptions() {
+      const that = this;
+      this.$axios({
+        url: "http://192.168.0.105:8890/customerInfoService/getOrderType",
+        method: "post"
+      })
+        .then(function(response) {
+          // todo 测试输出
+          console.log(response.data);
+          that.options = response.data.data;
+          that.type = 5;
+        })
+        .catch(function(error) {
+          console.log(error);
+          that.$message({
+            showClose: true,
+            message: "请求失败, 远程服务器出错! ",
+            type: "error"
+          });
+        });
+      this.$axios({
+        url: "http://192.168.0.105:8890/customerInfoService/getOrderStatus",
+        method: "post"
+      })
+        .then(function(response) {
+          // todo 测试输出
+          console.log(response.data);
+          that.options2 = response.data.data;
+          that.status = 1;
+        })
+        .catch(function(error) {
+          console.log(error);
+          that.$message({
+            showClose: true,
+            message: "请求失败, 远程服务器出错! ",
+            type: "error"
+          });
+        });
     },
     initOrders() {
       const that = this;
@@ -423,8 +462,67 @@ export default {
           });
         });
     },
-    calculateTotal() {
-      this.totalPrice = this.number * this.price;
+    submit() {
+      const that = this;
+      const data = {
+        id: sessionStorage.getItem("orderID"),
+        series: this.series,
+        customerId: sessionStorage.getItem("customerID"),
+        customerName: sessionStorage.getItem("customerName"),
+        name: this.name,
+        phone: this.phone,
+        address: this.address,
+        postcode: this.postcode,
+        productId: sessionStorage.getItem("product_id"),
+        productName: this.productName,
+        productSeries: sessionStorage.getItem("product_series"),
+        productDescription: this.productDescription,
+        number: this.number,
+        unit: this.unit,
+        total: this.total,
+        type: this.type,
+        status: this.status,
+        price: this.price,
+        startDate: this.startDate,
+        endDate: this.endDate
+      };
+      // todo 测试输出
+      console.log(data);
+      this.axios({
+        url: "http://192.168.0.105:8890/customerInfoService/updateOrderById",
+        data: data,
+        method: "post",
+        header: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(function(response) {
+          if (response.data.code + "" === "1") {
+            that.$message({
+              showClose: true,
+              message: "提交成功!",
+              type: "success"
+            });
+          } else {
+            that.$message({
+              showClose: true,
+              message: "提交失败!",
+              type: "error"
+            });
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+          that.$message({
+            showClose: true,
+            message: "请求失败, 远程服务器出错! ",
+            type: "error"
+          });
+        });
+    },
+    clear() {
+      // todo
+      alert("清除功能");
     }
   }
 };

@@ -188,7 +188,7 @@ export default {
       sessionStorage.setItem("customerID", row.id);
       this.switchRouter("details");
     },
-    // TODO 全选 与 全部删除
+    // todo 全选 与 全部删除
     handleSelectionChange(val) {
       this.multipleSelection = val;
       console.log("执行了全选");
