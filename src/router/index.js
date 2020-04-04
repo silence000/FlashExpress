@@ -4,10 +4,13 @@ import Login from "../views/login/Login";
 import Welcome from "../views/Welcome";
 import CustomerManage from "../views/CustomerService/CustomerManage";
 import NewCustomer from "../views/CustomerService/NewCustomer";
-import AlterCustomer from "../views/CustomerService/AlterCustomer";
-import Details from "../views/CustomerService/Details";
+import CustomerEdit from "../views/CustomerService/CustomerEdit";
+import CustomerDetails from "../views/CustomerService/CustomerDetails";
 import NewOrders from "../views/CustomerService/NewOrders";
 import CreateOrders from "../views/CustomerService/CreateOrders";
+import OrdersControl from "../views/CustomerService/OrdersControl";
+import OrdersDetails from "../views/CustomerService/OrdersDetails";
+import OrdersEdit from "../views/CustomerService/OrdersEdit";
 
 Vue.use(VueRouter);
 
@@ -39,14 +42,14 @@ const routes = [
         component: NewCustomer
       },
       {
-        path: "alter_customer",
-        name: "AlterCustomer",
-        component: AlterCustomer
+        path: "customer_Edit",
+        name: "CustomerEdit",
+        component: CustomerEdit
       },
       {
-        path: "details",
-        name: "Details",
-        component: Details
+        path: "customer_details",
+        name: "CustomerDetails",
+        component: CustomerDetails
       },
       {
         path: "new_orders",
@@ -57,6 +60,21 @@ const routes = [
         path: "create_orders",
         name: "CreateOrders",
         component: CreateOrders
+      },
+      {
+        path: "orders_control",
+        name: "OrdersControl",
+        component: OrdersControl
+      },
+      {
+        path: "orders_details",
+        name: "OrdersDetails",
+        component: OrdersDetails
+      },
+      {
+        path: "orders_edit",
+        name: "OrdersEdit",
+        component: OrdersEdit
       }
     ]
   }

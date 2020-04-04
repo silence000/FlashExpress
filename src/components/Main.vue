@@ -21,7 +21,9 @@
               <el-menu-item @click="switchRouter('new_orders')" index="1-2"
                 >新订单</el-menu-item
               >
-              <el-menu-item index="1-3">订单操作</el-menu-item>
+              <el-menu-item @click="switchRouter('orders_control')" index="1-3"
+                >订单操作</el-menu-item
+              >
               <el-menu-item index="1-4">退货</el-menu-item>
             </el-menu-item-group>
           </el-submenu>

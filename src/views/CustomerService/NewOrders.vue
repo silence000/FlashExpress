@@ -102,6 +102,7 @@ export default {
       pid: "", // 客户身份证号
       name: "", // 客户姓名
       mobile: "", // 客户手机号
+      // 分页信息
       currentPage: 1, // 当前页
       size: 5, // 默认每页显示的条数
       total: 0,

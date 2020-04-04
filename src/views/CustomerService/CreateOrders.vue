@@ -55,7 +55,9 @@
         <el-table-column prop="usableNum" label="已分配量"> </el-table-column>
       </el-table>
       <br />
-      <el-button type="primary" size="mini">生成缺货单</el-button>
+      <el-button type="primary" @click="stockout" size="mini"
+        >生成缺货单</el-button
+      >
       <div class="block">
         <el-pagination
           @size-change="handleSizeChange"
@@ -158,14 +160,15 @@
           <span>计量单位：</span>
           <el-input
             class="mini-input"
-            placeholder="请输入内容"
+            placeholder="无"
             v-model="unit"
             size="small"
+            :readonly="true"
           >
           </el-input>
         </div>
         <div class="search-content">
-          <span>单价：</span>
+          <span>单价(元)：</span>
           <el-input
             class="mini-input"
             placeholder="请输入内容"
@@ -176,7 +179,7 @@
           </el-input>
         </div>
         <div class="search-content">
-          <span>总额：</span>
+          <span>总额(元)：</span>
           <el-input
             class="mini-input"
             placeholder="无"
@@ -267,9 +270,10 @@
 <script>
 export default {
   mounted() {
+    this.entryVerify();
     this.query();
-    this.initOrders();
     this.initOptions();
+    this.initOrders();
   },
   data() {
     return {
@@ -302,10 +306,6 @@ export default {
     };
   },
   methods: {
-    test() {
-      console.log(this.status);
-      console.log(this.type);
-    },
     switchRouter(path) {
       const location = "/main/" + path;
       if (this.$route.path !== location) {
@@ -399,16 +399,17 @@ export default {
           });
         });
     },
-    initOrders() {
-      const that = this;
+    entryVerify() {
       if (sessionStorage.getItem("customerID") == null) {
-        that.$message({
+        this.$message({
           showClose: true,
           message: "非法进入! ",
           type: "error"
         });
-        return;
       }
+    },
+    initOrders() {
+      const that = this;
       const data = {
         customerId: sessionStorage.getItem("customerID")
       };
@@ -422,7 +423,6 @@ export default {
       })
         .then(function(response) {
           that.series = response.data.data.series;
-          sessionStorage.setItem("orderID", response.data.data.id);
         })
         .catch(function(error) {
           console.log(error);
@@ -479,9 +479,9 @@ export default {
         productDescription: this.productDescription,
         number: this.number,
         unit: this.unit,
-        total: this.total,
-        type: this.type,
-        status: this.status,
+        total: this.totalPrice, // 订单总金额
+        type: this.type, // 订单类型
+        status: this.status, // 订单状态
         price: this.price,
         startDate: this.startDate,
         endDate: this.endDate
@@ -523,6 +523,10 @@ export default {
     clear() {
       // todo
       alert("清除功能");
+    },
+    stockout() {
+      // todo
+      alert("缺货单");
     }
   }
 };

@@ -126,19 +126,26 @@
             v-model="date"
             clearable
             size="small"
+            @change="dateRegVerify"
           >
           </el-input>
         </div>
         <div class="search-content">
           <span>订单状态：</span>
-          <el-input
-            class="mini-input"
-            placeholder="请输入内容"
+          <el-select
             v-model="status"
-            clearable
+            placeholder="请选择"
             size="small"
+            class="input"
           >
-          </el-input>
+            <el-option
+              v-for="item in options2"
+              :key="item.exKey"
+              :label="item.exValue"
+              :value="item.exValue"
+            >
+            </el-option>
+          </el-select>
         </div>
         <div class="search-content">
           <span>订购商品：</span>
@@ -152,7 +159,7 @@
           </el-input>
         </div>
       </div>
-      <el-button type="primary" size="small">查询</el-button>
+      <el-button @click="query" type="primary" size="small">查询</el-button>
       <el-button
         type="danger"
         size="small"
@@ -169,7 +176,7 @@
       >
         <el-table-column prop="series" label="订单号" width="100">
         </el-table-column>
-        <el-table-column prop="name" label="商品名称" width="400">
+        <el-table-column prop="productName" label="商品名称" width="400">
         </el-table-column>
         <el-table-column prop="number" label="数量" width="100">
         </el-table-column>
@@ -188,7 +195,7 @@
           :page-sizes="[5, 10, 20, 50]"
           :page-size="100"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="400"
+          :total="total"
         >
         </el-pagination>
       </div>
@@ -213,46 +220,19 @@ export default {
       date: "",
       status: "",
       product: "",
-      // 查询表格
-      currentPage: 1,
-      tableData: [
-        {
-          series: 100000,
-          name: "杜蕾斯",
-          number: 10,
-          price: 20,
-          total: 200,
-          status: "已完成"
-        },
-        {
-          series: 100000,
-          name: "杜蕾斯",
-          number: 10,
-          price: 20,
-          total: 200,
-          status: "已完成"
-        },
-        {
-          series: 100000,
-          name: "杜蕾斯",
-          number: 10,
-          price: 20,
-          total: 200,
-          status: "已完成"
-        },
-        {
-          series: 100000,
-          name: "杜蕾斯",
-          number: 10,
-          price: 20,
-          total: 200,
-          status: "已完成"
-        }
-      ]
+      // 分页信息
+      currentPage: 1, // 当前页
+      size: 5, // 默认每页显示的条数
+      total: 0,
+      tableData: [],
+      // 下拉框数据
+      options2: []
     };
   },
   mounted() {
     this.init();
+    this.query();
+    this.initOptions();
   },
   methods: {
     switchRouter(path) {
@@ -267,10 +247,21 @@ export default {
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
     },
+    dateRegVerify() {
+      const that = this;
+      let reg = /^\d{4}-\d{1,2}-\d{1,2}$/;
+      if (this.date.length !== 0) {
+        if (reg.test(this.date) === false) {
+          this.$alert("请输入正确的日期", "警告", {
+            confirmButtonText: "确定"
+          });
+          that.date = "";
+        }
+      }
+    },
     init() {
       const that = this;
       const data = {
-        // id: this.$store.state.customerID
         id: sessionStorage.getItem("customerID")
       };
       this.$axios({
@@ -299,6 +290,78 @@ export default {
               type: "error"
             });
           }
+        })
+        .catch(function(error) {
+          console.log(error);
+          that.$message({
+            showClose: true,
+            message: "请求失败, 远程服务器出错! ",
+            type: "error"
+          });
+        });
+    },
+    query() {
+      const that = this;
+      const data = {
+        conditions: {
+          customerId: sessionStorage.getItem("customerID"),
+          startDate: this.date,
+          status: this.status,
+          productName: this.product
+        },
+        pageInfo: {
+          current: this.currentPage,
+          size: this.size
+        }
+      };
+      // todo
+      console.log(data);
+      this.$axios({
+        url:
+          "http://192.168.0.105:8890/customerInfoService/getOrderInfoFullByConditions",
+        data: data,
+        method: "post",
+        header: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(function(response) {
+          console.log(response.data);
+          that.tableData = response.data.data;
+          that.total = response.data.extra.total;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    initOptions() {
+      const that = this;
+      this.$axios({
+        url: "http://192.168.0.105:8890/customerInfoService/getOrderType",
+        method: "post"
+      })
+        .then(function(response) {
+          // todo 测试输出
+          console.log(response.data);
+          that.options = response.data.data;
+          that.type = 5;
+        })
+        .catch(function(error) {
+          console.log(error);
+          that.$message({
+            showClose: true,
+            message: "请求失败, 远程服务器出错! ",
+            type: "error"
+          });
+        });
+      this.$axios({
+        url: "http://192.168.0.105:8890/customerInfoService/getOrderStatus",
+        method: "post"
+      })
+        .then(function(response) {
+          // todo 测试输出
+          console.log(response.data);
+          that.options2 = response.data.data;
         })
         .catch(function(error) {
           console.log(error);
@@ -341,6 +404,9 @@ export default {
         color: $color-text-primary !important;
         background-color: white !important;
       }
+    }
+    .input {
+      width: 200px;
     }
   }
 }

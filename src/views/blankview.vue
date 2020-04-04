@@ -4,7 +4,9 @@
 <script>
 export default {
   mounted() {},
-  data() {},
+  data() {
+    return {};
+  },
   methods: {},
   computed: {},
   watch: {}

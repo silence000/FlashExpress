@@ -144,7 +144,6 @@ export default {
     init() {
       const that = this;
       const data = {
-        // id: this.$store.state.customerID
         id: sessionStorage.getItem("customerID")
       };
       this.$axios({

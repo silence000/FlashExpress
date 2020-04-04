@@ -15,6 +15,7 @@
           v-model="pid"
           clearable
           size="small"
+          @change="pidRegVerify"
         >
         </el-input>
       </div>
@@ -26,6 +27,7 @@
           v-model="name"
           clearable
           size="small"
+          @change="nameRegVerify"
         >
         </el-input>
       </div>
@@ -37,6 +39,7 @@
           v-model="mobile"
           clearable
           size="small"
+          @change="mobileRegVerify"
         >
         </el-input>
       </div>
@@ -98,7 +101,9 @@
       <el-button type="primary" size="mini" @click="toggleSelection()"
         >取消选中</el-button
       >
-      <el-button type="danger" size="mini">全部删除</el-button>
+      <el-button type="danger" size="mini" @click="deleteAll"
+        >全部删除</el-button
+      >
       <div class="block">
         <el-pagination
           @size-change="handleSizeChange"
@@ -133,6 +138,42 @@ export default {
     this.queryList();
   },
   methods: {
+    pidRegVerify() {
+      const that = this;
+      let reg = /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
+      if (this.pid.length !== 0) {
+        if (reg.test(this.pid) === false) {
+          this.$alert("请输入正确的身份证号", "警告", {
+            confirmButtonText: "确定"
+          });
+          that.pid = "";
+        }
+      }
+    },
+    nameRegVerify() {
+      const that = this;
+      let reg = /^[\u4E00-\u9FA5\uf900-\ufa2d·s]{2,20}$/;
+      if (this.name.length !== 0) {
+        if (reg.test(this.name) === false) {
+          this.$alert("请输入正确的姓名", "警告", {
+            confirmButtonText: "确定"
+          });
+          that.name = "";
+        }
+      }
+    },
+    mobileRegVerify() {
+      const that = this;
+      let reg = /^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/;
+      if (this.mobile.length !== 0) {
+        if (reg.test(this.mobile) === false) {
+          this.$alert("请输入正确的手机号", "警告", {
+            confirmButtonText: "确定"
+          });
+          that.mobile = "";
+        }
+      }
+    },
     switchRouter(path) {
       const location = "/main/" + path;
       if (this.$route.path !== location) {
@@ -140,53 +181,86 @@ export default {
       }
     },
     edit(row) {
-      this.$store.commit("setCustomerID", row.id);
       sessionStorage.setItem("customerID", row.id);
-      this.switchRouter("alter_customer");
+      this.switchRouter("customer_edit");
     },
     deleteOne(row, index, rows) {
-      rows.splice(index, 1);
       const that = this;
       const data = {
         id: row.id
       };
-      this.$axios({
-        url: "http://192.168.0.105:8890/customerInfoService/deleteOneCustomer",
-        data: data,
-        method: "post",
-        header: {
-          "Content-Type": "application/json"
-        }
+      this.$confirm("此操作将永久删除选中客户的所有数据, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       })
-        .then(function(response) {
-          if (response.data.code + "" === "1") {
-            that.$message({
-              showClose: true,
-              message: "删除成功!",
-              type: "success"
+        .then(() => {
+          rows.splice(index, 1);
+          that
+            .$axios({
+              url:
+                "http://192.168.0.105:8890/customerInfoService/deleteOneCustomer",
+              data: data,
+              method: "post",
+              header: {
+                "Content-Type": "application/json"
+              }
+            })
+            .then(function(response) {
+              if (response.data.code + "" === "1") {
+                that.$message({
+                  showClose: true,
+                  message: "删除成功!",
+                  type: "success"
+                });
+              } else {
+                that.$message({
+                  showClose: true,
+                  message: "删除失败!",
+                  type: "error"
+                });
+              }
+            })
+            .catch(function(error) {
+              console.log(error);
+              that.$message({
+                showClose: true,
+                message: "请求失败, 远程服务器出错! ",
+                type: "error"
+              });
             });
-          } else {
-            that.$message({
-              showClose: true,
-              message: "删除失败!",
-              type: "error"
-            });
-          }
         })
-        .catch(function(error) {
-          console.log(error);
-          that.$message({
-            showClose: true,
-            message: "请求失败, 远程服务器出错! ",
-            type: "error"
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    deleteAll() {
+      // todo 删除所有
+      this.$confirm("此操作将永久删除选中的所有数据, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
           });
         });
     },
     details(row) {
       console.log(row);
-      // this.$store.commit("setCustomerID", row.id);
       sessionStorage.setItem("customerID", row.id);
-      this.switchRouter("details");
+      this.switchRouter("customer_details");
     },
     // todo 全选 与 全部删除
     handleSelectionChange(val) {
