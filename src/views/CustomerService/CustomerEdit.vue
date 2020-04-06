@@ -17,6 +17,7 @@
           v-model="name"
           clearable
           size="small"
+          @change="nameRegVerify"
         >
         </el-input>
       </div>
@@ -28,6 +29,7 @@
           v-model="pid"
           clearable
           size="small"
+          @change="pidRegVerify"
         >
         </el-input>
       </div>
@@ -61,6 +63,7 @@
           v-model="mobile"
           clearable
           size="small"
+          @change="mobileRegVerify"
         >
         </el-input>
       </div>
@@ -83,6 +86,7 @@
           v-model="postcode"
           clearable
           size="small"
+          @change="postcodeRegVerify"
         >
         </el-input>
       </div>
@@ -94,6 +98,7 @@
           v-model="email"
           clearable
           size="small"
+          @change="emailRegVerify"
         >
         </el-input>
       </div>
@@ -108,6 +113,8 @@
   </div>
 </template>
 <script>
+import { RegxVerify } from "../../assets/js/RegxVerify";
+
 export default {
   data() {
     return {
@@ -125,6 +132,46 @@ export default {
     this.init();
   },
   methods: {
+    pidRegVerify() {
+      if (RegxVerify(this.pid, "pid") === false) {
+        this.$alert("请输入正确的身份证号", "警告", {
+          confirmButtonText: "确定"
+        });
+        this.pid = "";
+      }
+    },
+    nameRegVerify() {
+      if (RegxVerify(this.name, "name") === false) {
+        this.$alert("请输入正确的姓名", "警告", {
+          confirmButtonText: "确定"
+        });
+        this.name = "";
+      }
+    },
+    mobileRegVerify() {
+      if (RegxVerify(this.mobile, "mobile") === false) {
+        this.$alert("请输入正确的手机号", "警告", {
+          confirmButtonText: "确定"
+        });
+        this.mobile = "";
+      }
+    },
+    postcodeRegVerify() {
+      if (RegxVerify(this.postcode, "postcode") === false) {
+        this.$alert("请输入正确的邮政编码", "警告", {
+          confirmButtonText: "确定"
+        });
+        this.postcode = "";
+      }
+    },
+    emailRegVerify() {
+      if (RegxVerify(this.email, "email") === false) {
+        this.$alert("请输入正确的邮箱", "警告", {
+          confirmButtonText: "确定"
+        });
+        this.email = "";
+      }
+    },
     switchRouter(path) {
       const location = "/main/" + path;
       if (this.$route.path !== location) {

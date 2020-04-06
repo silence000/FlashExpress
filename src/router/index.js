@@ -86,4 +86,25 @@ const router = new VueRouter({
   routes
 });
 
+router.beforeEach((to, from, next) => {
+  // to 目标路由
+  // from 前一个路由
+  // next 必须执行next方法, 才能跳转路由
+  // 执行next(), 就会跳转到to对应的路由
+  // 执行next(false), 不跳转 停留在当前页面
+  // 执行next(xxx), 跳转到xxx页面
+  // $ { //to and from are Route Object,next() must be called to resolve the hook}
+  // }
+  console.log("beforeEach:即将进入了:" + to.fullPath + "页面");
+  if (to.fullPath === "/main/orders_control") {
+    if ("0" === sessionStorage.getItem("roleVal")) {
+      alert("权限验证通过");
+    } else {
+      alert("权限验证失败");
+      next(false);
+    }
+  }
+  next();
+});
+
 export default router;

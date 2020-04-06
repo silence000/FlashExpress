@@ -3,7 +3,26 @@
     <h3>欢迎使用<br />FlashExpress</h3>
   </div>
 </template>
-<script></script>
+<script>
+export default {
+  mounted() {
+    this.initData();
+  },
+  data() {
+    return {};
+  },
+  methods: {
+    initData() {
+      console.log("userID:" + sessionStorage.getItem("userID"));
+      console.log("userName: " + sessionStorage.getItem("userName"));
+      console.log("roleVal: " + sessionStorage.getItem("roleVal"));
+      console.log("roleDescription: " + sessionStorage.getItem("roleDescription"));
+    }
+  },
+  computed: {},
+  watch: {}
+};
+</script>
 <style scoped lang="scss">
 @import "../assets/scss/variable";
 h3 {

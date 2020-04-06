@@ -15,6 +15,7 @@
           v-model="pid"
           clearable
           size="small"
+          @change="pidRegVerify"
         >
         </el-input>
       </div>
@@ -26,6 +27,7 @@
           v-model="name"
           clearable
           size="small"
+          @change="nameRegVerify"
         >
         </el-input>
       </div>
@@ -37,6 +39,7 @@
           v-model="mobile"
           clearable
           size="small"
+          @change="mobileRegVerify"
         >
         </el-input>
       </div>
@@ -94,6 +97,7 @@
   </div>
 </template>
 <script>
+import { RegxVerify } from "../../assets/js/RegxVerify";
 export default {
   data() {
     return {
@@ -113,6 +117,30 @@ export default {
     this.queryList();
   },
   methods: {
+    pidRegVerify() {
+      if (RegxVerify(this.pid, "pid") === false) {
+        this.$alert("请输入正确的身份证号", "警告", {
+          confirmButtonText: "确定"
+        });
+        this.pid = "";
+      }
+    },
+    nameRegVerify() {
+      if (RegxVerify(this.name, "name") === false) {
+        this.$alert("请输入正确的姓名", "警告", {
+          confirmButtonText: "确定"
+        });
+        this.name = "";
+      }
+    },
+    mobileRegVerify() {
+      if (RegxVerify(this.mobile, "mobile") === false) {
+        this.$alert("请输入正确的手机号", "警告", {
+          confirmButtonText: "确定"
+        });
+        this.mobile = "";
+      }
+    },
     switchRouter(path) {
       const location = "/main/" + path;
       if (this.$route.path !== location) {

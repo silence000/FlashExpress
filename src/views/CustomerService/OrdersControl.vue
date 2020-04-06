@@ -41,7 +41,7 @@
             v-for="item in options2"
             :key="item.exKey"
             :label="item.exValue"
-            :value="item.exKey"
+            :value="item.exValue"
           >
           </el-option>
         </el-select>
@@ -59,6 +59,7 @@
           v-model="name"
           clearable
           size="small"
+          @change="nameRegVerify"
         >
         </el-input>
       </div>
@@ -70,6 +71,7 @@
           v-model="mobile"
           clearable
           size="small"
+          @change="mobileRegVerify"
         >
         </el-input>
       </div>
@@ -85,12 +87,12 @@
             v-for="item in options"
             :key="item.exKey"
             :label="item.exValue"
-            :value="item.exKey"
+            :value="item.exValue"
           >
           </el-option>
         </el-select>
       </div>
-      <el-button class="button" type="danger">重置</el-button>
+      <el-button @click="reset" class="button" type="danger">重置</el-button>
     </div>
     <div>
       <div class="title"><b>客户列表</b></div>
@@ -152,6 +154,8 @@
   </div>
 </template>
 <script>
+import { RegxVerify } from "../../assets/js/RegxVerify";
+
 export default {
   mounted() {
     this.queryList();
@@ -177,6 +181,22 @@ export default {
     };
   },
   methods: {
+    nameRegVerify() {
+      if (RegxVerify(this.name, "name") === false) {
+        this.$alert("请输入正确的姓名", "警告", {
+          confirmButtonText: "确定"
+        });
+        this.name = "";
+      }
+    },
+    mobileRegVerify() {
+      if (RegxVerify(this.mobile, "mobile") === false) {
+        this.$alert("请输入正确的手机号", "警告", {
+          confirmButtonText: "确定"
+        });
+        this.mobile = "";
+      }
+    },
     switchRouter(path) {
       const location = "/main/" + path;
       if (this.$route.path !== location) {
@@ -198,6 +218,14 @@ export default {
     edit(row) {
       console.log(row);
       this.switchRouter("orders_edit");
+    },
+    reset() {
+      this.startDate = "";
+      this.endDate = "";
+      this.status = "";
+      this.type = "";
+      this.name = "";
+      this.mobile = "";
     },
     queryList() {
       const that = this;

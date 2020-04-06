@@ -198,16 +198,18 @@
             placeholder="请输入内容"
             v-model="name"
             size="small"
+            @change="nameRegVerify"
           >
           </el-input>
         </div>
         <div class="search-content">
-          <span>客户电话：</span>
+          <span>客户手机：</span>
           <el-input
             class="mini-input"
             placeholder="请输入内容"
             v-model="phone"
             size="small"
+            @change="mobileRegVerify"
           >
           </el-input>
         </div>
@@ -218,6 +220,7 @@
             placeholder="请输入内容"
             v-model="postcode"
             size="small"
+            @change="postcodeRegVerify"
           >
           </el-input>
         </div>
@@ -268,6 +271,8 @@
   </div>
 </template>
 <script>
+import { RegxVerify } from "../../assets/js/RegxVerify";
+
 export default {
   mounted() {
     this.entryVerify();
@@ -306,6 +311,30 @@ export default {
     };
   },
   methods: {
+    nameRegVerify() {
+      if (RegxVerify(this.name, "name") === false) {
+        this.$alert("请输入正确的姓名", "警告", {
+          confirmButtonText: "确定"
+        });
+        this.name = "";
+      }
+    },
+    mobileRegVerify() {
+      if (RegxVerify(this.phone, "mobile") === false) {
+        this.$alert("请输入正确的手机号", "警告", {
+          confirmButtonText: "确定"
+        });
+        this.phone = "";
+      }
+    },
+    postcodeRegVerify() {
+      if (RegxVerify(this.postcode, "postcode") === false) {
+        this.$alert("请输入正确的邮政编码", "警告", {
+          confirmButtonText: "确定"
+        });
+        this.postcode = "";
+      }
+    },
     switchRouter(path) {
       const location = "/main/" + path;
       if (this.$route.path !== location) {
