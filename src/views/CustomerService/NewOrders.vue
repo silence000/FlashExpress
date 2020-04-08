@@ -171,7 +171,8 @@ export default {
       };
       this.$axios({
         url:
-          "http://192.168.0.105:8890/customerInfoService/getCustomerInfoList",
+          this.$store.state.API_URL +
+          "/customerInfoService/getCustomerInfoList",
         data: data,
         method: "post",
         header: {

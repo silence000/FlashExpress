@@ -75,7 +75,7 @@ export default {
         userpass: this.userpass
       };
       this.$axios({
-        url: "http://192.168.0.105:8890/login",
+        url: this.$store.state.API_URL + "/login",
         data: data,
         method: "post",
         header: {
@@ -127,7 +127,7 @@ export default {
     },
     queryAuthority(role) {
       this.$axios
-        .post(`http://192.168.0.105:8890/role/query${role}`)
+        .post(this.$store.state.API_URL + `/role/query${role}`)
         .then(function(response) {
           sessionStorage.setItem("roleVal", response.data.value);
           sessionStorage.setItem("roleDescription", response.data.description);

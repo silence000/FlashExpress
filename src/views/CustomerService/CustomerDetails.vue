@@ -265,7 +265,7 @@ export default {
         id: sessionStorage.getItem("customerID")
       };
       this.$axios({
-        url: "http://192.168.0.105:8890/customerInfoService/getCustomer",
+        url: this.$store.state.API_URL + "/customerInfoService/getCustomer",
         data: data,
         method: "post",
         header: {
@@ -318,7 +318,8 @@ export default {
       console.log(data);
       this.$axios({
         url:
-          "http://192.168.0.105:8890/customerInfoService/getOrderInfoFullByConditions",
+          this.$store.state.API_URL +
+          "/customerInfoService/getOrderInfoFullByConditions",
         data: data,
         method: "post",
         header: {
@@ -337,7 +338,7 @@ export default {
     initOptions() {
       const that = this;
       this.$axios({
-        url: "http://192.168.0.105:8890/customerInfoService/getOrderType",
+        url: this.$store.state.API_URL + "/customerInfoService/getOrderType",
         method: "post"
       })
         .then(function(response) {
@@ -355,7 +356,7 @@ export default {
           });
         });
       this.$axios({
-        url: "http://192.168.0.105:8890/customerInfoService/getOrderStatus",
+        url: this.$store.state.API_URL + "/customerInfoService/getOrderStatus",
         method: "post"
       })
         .then(function(response) {

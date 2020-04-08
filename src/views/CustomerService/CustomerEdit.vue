@@ -194,7 +194,7 @@ export default {
         id: sessionStorage.getItem("customerID")
       };
       this.$axios({
-        url: "http://192.168.0.105:8890/customerInfoService/getCustomer",
+        url: this.$store.state.API_URL + "/customerInfoService/getCustomer",
         data: data,
         method: "post",
         header: {
@@ -242,7 +242,7 @@ export default {
         email: this.email
       };
       this.$axios({
-        url: "http://192.168.0.105:8890/customerInfoService/updateCustomer",
+        url: this.$store.state.API_URL + "/customerInfoService/updateCustomer",
         data: data,
         method: "post",
         header: {

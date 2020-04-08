@@ -358,7 +358,7 @@ export default {
       };
       this.$axios({
         url:
-          "http://192.168.0.105:8890/customerInfoService/getProductInfoByName",
+          this.$store.state.API_URL + "/customerInfoService/getProductInfoByName",
         data: data,
         method: "post",
         header: {
@@ -392,7 +392,7 @@ export default {
     initOptions() {
       const that = this;
       this.$axios({
-        url: "http://192.168.0.105:8890/customerInfoService/getOrderType",
+        url: this.$store.state.API_URL + "/customerInfoService/getOrderType",
         method: "post"
       })
         .then(function(response) {
@@ -410,7 +410,7 @@ export default {
           });
         });
       this.$axios({
-        url: "http://192.168.0.105:8890/customerInfoService/getOrderStatus",
+        url: this.$store.state.API_URL + "/customerInfoService/getOrderStatus",
         method: "post"
       })
         .then(function(response) {
@@ -443,7 +443,7 @@ export default {
         customerId: sessionStorage.getItem("customerID")
       };
       this.$axios({
-        url: "http://192.168.0.105:8890/customerInfoService/initOrder",
+        url: this.$store.state.API_URL + "/customerInfoService/initOrder",
         data: data,
         method: "post",
         header: {
@@ -471,7 +471,7 @@ export default {
       };
       this.$axios({
         url:
-          "http://192.168.0.105:8890/customerInfoService/getCenterInfoByKeyword",
+          this.$store.state.API_URL + "/customerInfoService/getCenterInfoByKeyword",
         data: data,
         method: "post",
         header: {
@@ -518,7 +518,7 @@ export default {
       // todo 测试输出
       console.log(data);
       this.axios({
-        url: "http://192.168.0.105:8890/customerInfoService/updateOrderById",
+        url: this.$store.state.API_URL + "/customerInfoService/updateOrderById",
         data: data,
         method: "post",
         header: {

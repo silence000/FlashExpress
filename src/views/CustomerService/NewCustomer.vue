@@ -149,7 +149,7 @@ export default {
         email: this.email
       };
       this.$axios({
-        url: "http://192.168.0.105:8890/customerInfoService/insertCustomer",
+        url: this.$store.state.API_URL + "/customerInfoService/insertCustomer",
         data: data,
         method: "post",
         header: {

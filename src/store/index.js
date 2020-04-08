@@ -5,14 +5,10 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    userID: "",
-    API_URL: ""
+    // API_URL: "http://localhost:8890",
+    API_URL: "http://192.168.0.102:8890/"
   },
-  mutations: {
-    setUserID(state, val) {
-      state.userID = val;
-    }
-  },
+  mutations: {},
   actions: {},
   modules: {}
 });
