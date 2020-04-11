@@ -358,7 +358,8 @@ export default {
       };
       this.$axios({
         url:
-          this.$store.state.API_URL + "/customerInfoService/getProductInfoByName",
+          this.$store.state.API_URL +
+          "/customerInfoService/getProductInfoByName",
         data: data,
         method: "post",
         header: {
@@ -471,7 +472,8 @@ export default {
       };
       this.$axios({
         url:
-          this.$store.state.API_URL + "/customerInfoService/getCenterInfoByKeyword",
+          this.$store.state.API_URL +
+          "/customerInfoService/getCenterInfoByKeyword",
         data: data,
         method: "post",
         header: {
@@ -479,8 +481,14 @@ export default {
         }
       })
         .then(function(response) {
-          that.tableData = response.data.data;
-          that.total = response.data.data[0].total;
+          console.log(response.data);
+          if (response.data.code + "" !== "0") {
+            that.tableData = response.data.data;
+            that.total = response.data.data[0].total;
+          } else {
+            that.tableData = [];
+            that.total = 0;
+          }
         })
         .catch(function(error) {
           console.log(error);

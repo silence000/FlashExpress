@@ -83,10 +83,11 @@ export default {
         }
       })
         .then(function(response) {
-          if (response.data.length !== 0) {
-            sessionStorage.setItem("userID", response.data.id);
-            sessionStorage.setItem("userName", response.data.username);
-            that.queryAuthority(response.data.role);
+          console.log(response.data);
+          if (response.data.code + "" === "1") {
+            sessionStorage.setItem("userID", response.data.data.id);
+            sessionStorage.setItem("userName", response.data.data.username);
+            that.queryAuthority(response.data.data.role);
             that.$message({
               showClose: true,
               message: "登录成功! 即将跳转到主页... ",

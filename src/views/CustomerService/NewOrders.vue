@@ -163,11 +163,15 @@ export default {
     queryList() {
       const that = this;
       const data = {
-        pid: this.pid,
-        name: this.name,
-        mobile: this.mobile,
-        current: this.currentPage,
-        size: this.size
+        conditions: {
+          pid: this.pid,
+          name: this.name,
+          mobile: this.mobile
+        },
+        pageInfo: {
+          current: this.currentPage,
+          size: this.size
+        }
       };
       this.$axios({
         url:
@@ -181,7 +185,7 @@ export default {
       })
         .then(function(response) {
           that.tableData = response.data.data;
-          that.total = response.data.data[0].total;
+          that.total = response.data.extra.total;
         })
         .catch(function(error) {
           console.log(error);

@@ -81,7 +81,7 @@
               <span>用户管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="6-1">添加用户</el-menu-item>
+              <el-menu-item @click="switchRouter('new_user')" index="6-1">添加用户</el-menu-item>
               <el-menu-item index="6-2">查询用户</el-menu-item>
             </el-menu-item-group>
           </el-submenu>

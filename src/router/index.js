@@ -11,10 +11,15 @@ import CreateOrders from "../views/CustomerService/CreateOrders";
 import OrdersControl from "../views/CustomerService/OrdersControl";
 import OrdersDetails from "../views/CustomerService/OrdersDetails";
 import OrdersEdit from "../views/CustomerService/OrdersEdit";
+import NewUser from "../views/UserManage/NewUser";
 
 Vue.use(VueRouter);
 
 const routes = [
+  {
+    path: "/",
+    redirect: "/login"
+  },
   {
     path: "/login",
     name: "Login",
@@ -75,6 +80,11 @@ const routes = [
         path: "orders_edit",
         name: "OrdersEdit",
         component: OrdersEdit
+      },
+      {
+        path: "new_user",
+        name: "NewUser",
+        component: NewUser
       }
     ]
   }
@@ -95,12 +105,12 @@ router.beforeEach((to, from, next) => {
   // 执行next(xxx), 跳转到xxx页面
   // $ { //to and from are Route Object,next() must be called to resolve the hook}
   // }
-  console.log("beforeEach:即将进入了:" + to.fullPath + "页面");
+  // console.log("beforeEach:即将进入了:" + to.fullPath + "页面");
   if (to.fullPath === "/main/orders_control") {
     if ("0" === sessionStorage.getItem("roleVal")) {
-      alert("权限验证通过");
+      // alert("权限验证通过");
     } else {
-      alert("权限验证失败");
+      // alert("权限验证失败");
       next(false);
     }
   }
